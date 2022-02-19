@@ -1,0 +1,20 @@
+{
+    "Create Bot Scene": {
+        "scope": "javascript,typescript",
+        "prefix": "scene",
+        "body": [
+            "export const enterRateTrainingScene = async (ctx, user) => {",
+            "user = await Users.findOne({ id: user.id })",
+            "await Events.ChangeScene(user.scene, user.tgID, Scenes.Client.Notify.RateTraining)",
+            "}",
+            "",
+            "export const handlerRateTrainingScene = async (ctx, user) => {",
+            "const action = ctx.message?.text",
+            " if (!action) {",
+            " return await ctx.reply(ctx.i18n.t(\"notVariableReply\"))",
+            "}",
+            "}"
+        ],
+        "description": "Create bot scene"
+    }
+}
