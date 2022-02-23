@@ -53,7 +53,7 @@ export class RefLinkTrainer extends Scene {
   }
 
   async sendLinkMessage() {
-    const link = `t.me/training_tests_bot?start=${this.studiaRef}`
+    const link = `t.me/go_workout_bot?start=${this.studiaRef}`
     const keyboard = Keyboard.make([this.ctx.i18n.t("bBack")]).reply()
 
     await this.ctx.replyWithMarkdown(this.ctx.i18n.t("studiaRefLink", { link }), keyboard)
