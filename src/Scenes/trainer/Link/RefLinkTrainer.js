@@ -34,7 +34,7 @@ export class RefLinkTrainer extends Scene {
   }
 
   async sendQRCodeMessage() {
-    const link = `t.me/training_tests_bot?start=${this.studiaRef}`
+    const link = `t.me/go_workout_bot?start=${this.studiaRef}`
     const path = `./storage/${this.studiaRef}.png`
 
     await QRCode.toFile(path, link, {
