@@ -38,6 +38,8 @@ export class BaseAllClientsTrainer extends Scene {
     const ACTION_BUTTON_MAIN_MENU = this.ctx.i18n.t("bMainMenu")
     const ACTION_NEXT_PAGE = "➡️"
     const ACTION_PREV_PAGE = "⬅️"
+    const ACTION_FIRST_PAGE = "⏪"
+    const ACTION_LAST_PAGE = "⏩"
 
     const { currentPage, allPages, clientsData } = this.user.temp
     const { role } = this.user.state
@@ -69,6 +71,18 @@ export class BaseAllClientsTrainer extends Scene {
         await this.reenter()
       }
       return await this.ctx.answerCbQuery()
+    } else if (this.queryPayload === ACTION_FIRST_PAGE) {
+      if (currentPage !== 1) {
+        await Users.updateOne({ id: this.user.id }, { "temp.currentPage": 1 })
+        await this.reenter()
+      }
+      return await this.ctx.answerCbQuery()
+    } else if (this.queryPayload === ACTION_LAST_PAGE) {
+      if (this.currentPage !== allPages) {
+        await Users.updateOne({ id: this.user.id }, { "temp.currentPage": allPages })
+        await this.reenter()
+      }
+      return await this.ctx.answerCbQuery()
     }
   }
 
@@ -82,12 +96,14 @@ export class BaseAllClientsTrainer extends Scene {
       this.clientsData.push({ name, surname, tgID, abonementDays })
       this.clientsCount += 1
     })
+
+    this.clientsData.sort(this.sortClients)
   }
 
   async initPagination() {
     this.currentPage = this.user.temp.currentPage ?? 1
     this.selectedPage = this.currentPage - 1
-    this.clientsChunk = chunk(this.clientsData, 5)
+    this.clientsChunk = chunk(this.clientsData, 10)
     this.countPages = this.clientsChunk.length
 
     for (let client of this.clientsChunk[this.selectedPage] ?? []) {
@@ -110,10 +126,16 @@ export class BaseAllClientsTrainer extends Scene {
     }
   }
 
+  sortClients(x, y){
+    if (x.name < y.name) {return -1;}
+    if (x.name > y.name) {return 1;}
+    return 0;
+  }
+
   async selectClientMessage() {
     const buildClients = Keyboard.make(this.clientsView, { columns: 1 })
-    const buildNavigation = Keyboard.make(["⬅️", `${this.currentPage}/${this.countPages}`, "➡️"], {
-      columns: 3,
+    const buildNavigation = Keyboard.make([ "⏪", "⬅️", `${this.currentPage}/${this.countPages}`, "➡️", "⏩"], {
+      columns: 5,
     })
     const keyboard = Keyboard.combine(buildClients, buildNavigation).inline()
     const keyboardBack = Keyboard.make([this.ctx.i18n.t("bMainMenu")])

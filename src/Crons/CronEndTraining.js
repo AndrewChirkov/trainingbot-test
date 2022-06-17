@@ -27,6 +27,7 @@ export class CronEndTraining extends Crons {
     this.task.start()
     this.task.id = this.user.tgID
     this.task.type = "TRAINING"
+    this.checkExpired()
   }
 
   async end() {
@@ -51,6 +52,14 @@ export class CronEndTraining extends Crons {
     this.exp.hours = selectedHours + 1 //  + 1
     this.exp.day = selectedDay
     this.exp.month = selectedMonthReal
+  }
+
+  checkExpired() {
+    const selectedTimeMs = this.user.state.select.timeMs
+    
+    if (selectedTimeMs < Date.now()) {
+      this.end()
+    }
   }
 
   async addCrons() {
