@@ -22,12 +22,12 @@ export const LongAgoNotifyCron = async () => {
               scene: Scenes.Client.Booking.OfferBooking,
             }
           )
-          await bot.telegram.sendMessage(
+          bot.telegram.sendMessage(
             user.tgID,
             i18n.t(user.language, "longAgoBookingClient"),
             keyboard
-          )
-          resolve()
+          ).catch(e => console.log(e))
+          .finally(() => resolve())
         }, 300)
       })
     }
@@ -63,7 +63,7 @@ export const LongAgoTrainerCron = async () => {
             studia: user.state.studia,
             location: user.state.location,
           })
-          const timetables = timetablesFind.trainer.timetables
+          const timetables = timetablesFind?.trainer?.timetables || []
           const lastTimetable = timetables[timetables.length - 1]
           const role = user.state.role
           const location = user.state.location
@@ -92,19 +92,18 @@ export const LongAgoTrainerCron = async () => {
                 "temp.mainMenu": mainMenu,
               }
             )
-            await bot.telegram.sendMessage(
+            bot.telegram.sendMessage(
               user.tgID,
               i18n.t(user.language, "longAgoTimetablesTrainer"),
               keyboard
-            )
+            ).catch(e => console.log(e))
+            .finally(() => resolve())
           }
-
-          resolve()
         }, 300)
       })
     }
 
-    const task = schedule("0 14 * * Thursday", async () => {
+    const task = schedule("07 20 * * Friday", async () => {
       console.log("task long ago trainer worked")
       const users = await Users.find({ account: Account.Trainer })
 
