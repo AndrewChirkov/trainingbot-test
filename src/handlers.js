@@ -157,7 +157,7 @@ export const Handlers = () => {
     const users = await Users.find({})
 
     for (const user of users) {
-      if (user && user.crons.oneHourTraining) {
+      if (user && user.crons?.oneHourTraining) {
         await Users.updateOne(
           { id: user.id },
           {
@@ -169,23 +169,23 @@ export const Handlers = () => {
             "state.cancel": {},
           }
         )
-        const keyboard = Keyboard.make([i18n.t(user.language, "bContinue")]).reply()
+        const keyboard = Keyboard.make([i18n.t(Languages.UK, "bContinue")]).reply()
         await ctx.telegram.sendMessage(
           user.tgID,
-          "Ошибка исправлена, продолжайте использование!",
+          "Мова оновлена! 🇺🇦",
           keyboard
         )
       }
   
-      if (user && !user.crons.oneHourTraining) {
+      if (user && !user.crons?.oneHourTraining) {
         await Users.updateOne(
           { id: user.id },
           { scene: "BOT_UPDATE_SCENE", crons: {}, language: 'UK', "state.cancel": {}, "state.select": {} }
         )
-        const keyboard = Keyboard.make([i18n.t(user.language, "bContinue")]).reply()
+        const keyboard = Keyboard.make([i18n.t(Languages.UK, "bContinue")]).reply()
         await ctx.telegram.sendMessage(
           user.tgID,
-          "Ошибка исправлена, продолжайте использование!",
+          "Мова оновлена! 🇺🇦",
           keyboard
         )
       }
