@@ -58,7 +58,7 @@ export class MessageSendAllTrainingTrainer extends Scene {
         this.ctx.telegram
           .sendMessage(
             client.tgID,
-            this.ctx.i18n.t("msgFromTrainerToTraining", { message: this.payload })
+            this.ctx.i18n.t(client.language, "msgFromTrainerToTraining", { message: this.payload })
           )
           .catch(e => console.log(e))
           .finally(() => resolve())

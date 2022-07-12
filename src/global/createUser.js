@@ -1,6 +1,6 @@
 import { Scenes } from "../Scenes/settings/scenes"
 import { Users } from "../../lib/model/users"
-import { SelectLanguage } from "../Scenes/all/SelectLanguage"
+import { SelectAccount } from "../Scenes/all/SelectAccount"
 
 export const createUser = async ctx => {
   const lastUser = await Users.findOne().sort({ id: -1 })
@@ -14,8 +14,9 @@ export const createUser = async ctx => {
   const userData = {
     id: lastID,
     tgID: ctx.from.id,
-    scene: Scenes.All.Language,
+    scene: Scenes.All.Account,
     abonementDays: 0,
+    language: 'UK',
     state: {
       status: "ok",
     },
@@ -24,6 +25,9 @@ export const createUser = async ctx => {
 
   await Users.create(userData)
   const user = await Users.findOne({ tgID: userData.tgID })
-  const scene = new SelectLanguage(user, ctx)
+
+  ctx.i18n.locale(user.language)
+
+  const scene = new SelectAccount(user, ctx)
   await scene.enter()
 }

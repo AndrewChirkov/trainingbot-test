@@ -18,11 +18,11 @@ export class SelectLanguage extends Scene {
   }
 
   async enterMessage() {
-    const keyboard = Keyboard.make([["🇷🇺", "🇺🇦"]])
+    const keyboard = Keyboard.make([["🇺🇦"]])
       .oneTime()
       .reply()
 
-    await this.ctx.reply(i18n.t(Languages.RU, "selectLanguage"), keyboard)
+    await this.ctx.reply(i18n.t(Languages.UK, "selectLanguage"), keyboard)
   }
 
   async handler() {

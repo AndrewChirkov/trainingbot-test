@@ -154,10 +154,41 @@ export const Handlers = () => {
   })
 
   bot.command("update_4045945925942859429854295", async ctx => {
-    const users = await Users.find({ account: Account.Trainer })
+    const users = await Users.find({})
 
     for (const user of users) {
-      await Users.updateOne({ id: user.id }, { rating: 0 })
+      if (user && user.crons.oneHourTraining) {
+        await Users.updateOne(
+          { id: user.id },
+          {
+            scene: "BOT_UPDATE_SCENE",
+            $inc: { abonementDays: 1 },
+            language: 'UK',
+            "state.select": {},
+            crons: {},
+            "state.cancel": {},
+          }
+        )
+        const keyboard = Keyboard.make([i18n.t(user.language, "bContinue")]).reply()
+        await ctx.telegram.sendMessage(
+          user.tgID,
+          "Ошибка исправлена, продолжайте использование!",
+          keyboard
+        )
+      }
+  
+      if (user && !user.crons.oneHourTraining) {
+        await Users.updateOne(
+          { id: user.id },
+          { scene: "BOT_UPDATE_SCENE", crons: {}, language: 'UK', "state.cancel": {}, "state.select": {} }
+        )
+        const keyboard = Keyboard.make([i18n.t(user.language, "bContinue")]).reply()
+        await ctx.telegram.sendMessage(
+          user.tgID,
+          "Ошибка исправлена, продолжайте использование!",
+          keyboard
+        )
+      }
     }
 
     await ctx.reply("Bot Updated :)")

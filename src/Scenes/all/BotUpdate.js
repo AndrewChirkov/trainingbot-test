@@ -3,6 +3,7 @@ import { Scenes } from "../settings/scenes"
 import { Account } from "../../strings/constants"
 import { SelectLocationClient } from "../client/register/SelectLocationScene"
 import { SelectLocationTrainer } from "../trainer/timetable/Create/SelectLocationTrainer"
+import { SelectAccount } from "./SelectAccount"
 
 export class BotUpdate extends Scene {
   constructor(user, ctx) {
@@ -27,10 +28,14 @@ export class BotUpdate extends Scene {
   }
 
   async goStartScene() {
-    if (this.user.account === Account.Client) {
+    if (this.user.account === Account.Client && this.user.state.location) {
       await this.next(SelectLocationClient)
-    } else if (this.user.account === Account.Trainer) {
+    } else if (this.user.account === Account.Trainer && this.user.state.location) {
       await this.next(SelectLocationTrainer)
+    }
+
+    if (!this.user.account || !this.user.state.location) {
+      await this.next(SelectAccount)
     }
   }
 }

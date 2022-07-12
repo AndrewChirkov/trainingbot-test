@@ -15,7 +15,8 @@ dotenv.config()
 export const bot = new Telegraf(process.env.TOKEN)
 export const i18n = new I18n({
   directory: path.resolve(__dirname, "./../locales"),
-  defaultLanguage: Locales.RU,
+  defaultLanguageOnMissing: true,
+  defaultLanguage: Locales.UK,
   useSession: true,
   sessionName: "session",
   allowMissing: false,
