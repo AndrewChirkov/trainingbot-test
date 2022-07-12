@@ -157,9 +157,9 @@ export const Handlers = () => {
     const users = await Users.find({})
 
     for (const user of users) {
-      if (user && user.crons?.oneHourTraining) {
+      if (user && user.account === Account.Client && user.crons?.oneHourTraining) {
         await Users.updateOne(
-          { id: user.id },
+          { tgID: user.tgID },
           {
             scene: "BOT_UPDATE_SCENE",
             $inc: { abonementDays: 1 },
@@ -174,12 +174,12 @@ export const Handlers = () => {
           user.tgID,
           "Мова оновлена! 🇺🇦",
           keyboard
-        )
+        ).catch(e => console.log(e))
       }
   
-      if (user && !user.crons?.oneHourTraining) {
+      if (user && user.account === Account.Client && !user.crons?.oneHourTraining) {
         await Users.updateOne(
-          { id: user.id },
+          { tgID: user.tgID },
           { scene: "BOT_UPDATE_SCENE", crons: {}, language: 'UK', "state.cancel": {}, "state.select": {} }
         )
         const keyboard = Keyboard.make([i18n.t(Languages.UK, "bContinue")]).reply()
@@ -187,7 +187,26 @@ export const Handlers = () => {
           user.tgID,
           "Мова оновлена! 🇺🇦",
           keyboard
+        ).catch(e => console.log(e))
+      }
+
+      if (user && user.account === Account.Trainer) {
+        await Users.updateOne(
+          { tgID: user.tgID },
+          {
+            scene: "BOT_UPDATE_SCENE",
+            language: 'UK',
+            "state.select": {},
+            "state.check": {},
+            temp: {},
+          }
         )
+        const keyboard = Keyboard.make([i18n.t(user.language, "bContinue")]).reply()
+        await ctx.telegram.sendMessage(
+          user.tgID,
+          "Мова оновлена! 🇺🇦",
+          keyboard
+        ).catch(e => console.log(e))
       }
     }
 
