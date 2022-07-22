@@ -44,3 +44,6 @@ bot.catch(err => console.log(err))
 bot.launch().then(r => console.log("Bot Started"))
 Handlers()
 StartCrons().then(r => true)
+
+process.on("uncaughtException", (err) => console.log(err));
+process.on("rejectionHandled", (err) => {});
