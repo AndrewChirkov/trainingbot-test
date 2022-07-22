@@ -62,9 +62,9 @@ export class SelectTimeTrainer extends Scene {
 
     if (this.payload === ACTION_BUTTON_GO_CALENDAR) {
       return await this.next(SelectDayTrainer)
-    } //else {
-    //return await this.DEV_SET_TIME()
-    // }
+    } else if (!tempTimes.includes(this.payload)) {
+      return await this.setTime()
+    }
   }
 
   async selectTimeMessage() {
@@ -107,23 +107,41 @@ export class SelectTimeTrainer extends Scene {
     )
   }
 
-  async DEV_SET_TIME() {
+  async setTime() {
+    const { studia, location } = this.user.state
+    const schedule = await Timetable.findOne({ studia, location })
+    const timetables = schedule.trainer.timetables
+    const isTimetable = timetables.find(timetable => this.equalsTimetable(timetable))
+
+    if (isTimetable) {
+      return await this.errorWasCreatedTimetable()
+    }
+
     const { day, monthDate, year } = this.user.state.select
     const fixTimes = this.payload.split(":")
     const hour = Number(fixTimes[0])
     const min = Number(fixTimes[1])
 
+    const currentMs = Date.now()
+
     const selectedMs = new Date(year, monthDate, day, hour, min).getTime()
 
-    await Users.updateOne(
-      { id: this.user.id },
-      {
-        "state.select.time": this.payload,
-        "state.select.timeMs": selectedMs,
-      }
-    )
+    if (hour > 22 || hour < 8 || min > 59 || min < 0 || (hour === 22 && min > 0)) {
+      return await this.ctx.reply(this.ctx.i18n.t("errorTime"))
+    }
 
-    return await this.next(SelectTimetableTrainer)
+    if (currentMs < selectedMs) {
+      await Users.updateOne(
+        { id: this.user.id },
+        {
+          "state.select.time": this.payload,
+          "state.select.timeMs": selectedMs,
+        }
+      )
+      await this.next(SelectTimetableTrainer)
+    } else {
+      await this.errorAfterTime()
+    }
   }
 
   getAllTimes() {

@@ -48,7 +48,7 @@ export class CronEndTraining extends Crons {
     const selectedMonthReal = this.generateMonthFromDate(selectedTimeMs) + 1
     const selectedMinutes = this.generateMinsFromDate(selectedTimeMs)
 
-    this.exp.mins = selectedMinutes + 20 // + 20
+    this.exp.mins = selectedMinutes  // + 20 min
     this.exp.hours = selectedHours + 1 //  + 1
     this.exp.day = selectedDay
     this.exp.month = selectedMonthReal
